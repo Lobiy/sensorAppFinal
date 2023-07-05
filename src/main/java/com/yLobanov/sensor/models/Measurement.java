@@ -26,9 +26,6 @@ public class Measurement {
     @Column(name = "raining")
     private boolean isRaining;
 
-    @Column(name = "sensor_name")
-    private String sensorName;
-
     @Column(name = "measurement_time")
     private Date measurementTime;
 
