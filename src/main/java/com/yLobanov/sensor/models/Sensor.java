@@ -14,7 +14,7 @@ import java.util.Set;
 @Setter
 public class Sensor {
     @Id
-    @Column(name = "sensor_id")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
