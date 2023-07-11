@@ -1,12 +1,12 @@
 package com.yLobanov.sensor.models;
 
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
 
 @Entity
 @Table(name = "measurement")
@@ -25,9 +25,6 @@ public class Measurement {
 
     @Column(name = "raining")
     private boolean isRaining;
-
-    @Column(name = "measurement_time")
-    private Date measurementTime;
 
     @ManyToOne
     @JoinColumn(name="sensor_name", nullable=false)

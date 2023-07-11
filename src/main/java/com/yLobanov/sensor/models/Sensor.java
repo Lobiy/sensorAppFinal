@@ -1,5 +1,6 @@
 package com.yLobanov.sensor.models;
 
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
