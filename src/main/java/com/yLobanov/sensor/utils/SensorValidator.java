@@ -27,7 +27,7 @@ public class SensorValidator implements Validator {
         Sensor sensor = (Sensor) target;
 
         try {
-            sensorService.loadSensorBySensorName(sensor.getName());
+            sensorService.loadSensorByName(sensor.getName());
         } catch (SensorNotFoundException ignored) {
             return; // Ok, sensor was not created before
         }

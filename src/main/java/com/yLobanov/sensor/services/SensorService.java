@@ -22,9 +22,9 @@ public class SensorService {
         sensorRepository.save(sensor);
     }
 
-    public Sensor loadSensorBySensorName(String sensor_name) throws SensorNotFoundException {
-        Optional<Sensor> sensor = sensorRepository.findByName(sensor_name);
-        if(sensor.isEmpty()) throw new SensorNotFoundException("Sensor was not found");
-        return sensor.get();
+    public Sensor loadSensorByName(String name) throws SensorNotFoundException {
+        Optional<Sensor> sensor = sensorRepository.findByName(name);
+        if(sensor.isPresent()) return sensor.get();
+        else throw new SensorNotFoundException("Sensor was not found");
     }
 }
