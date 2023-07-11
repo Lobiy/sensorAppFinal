@@ -32,6 +32,6 @@ public class SensorValidator implements Validator {
             return; // Ok, sensor was not created before
         }
 
-        errors.rejectValue("sensor_name", "", "Person with such username already exists");
+        errors.rejectValue("sensor_name", "", "Sensor with such username already exists");
     }
 }

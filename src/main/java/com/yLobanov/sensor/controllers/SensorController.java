@@ -3,8 +3,11 @@ package com.yLobanov.sensor.controllers;
 import com.yLobanov.sensor.dto.SensorDTO;
 import com.yLobanov.sensor.models.Sensor;
 import com.yLobanov.sensor.services.SensorService;
+import com.yLobanov.sensor.utils.SensorErrorResponse;
+import com.yLobanov.sensor.utils.SensorNotFoundException;
 import com.yLobanov.sensor.utils.SensorValidator;
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +35,8 @@ public class SensorController {
 
     @PostMapping("/registration")
     public ResponseEntity<HttpStatus> createNewSensor(@RequestBody @Valid SensorDTO sensorDTO, BindingResult result) {
-        sensorValidator.validate(convertToPerson(sensorDTO), result);
+        Sensor sensor = convertToSensor(sensorDTO);
+        sensorValidator.validate(sensor, result);
         if(result.hasErrors()) {
             StringBuilder errors = new StringBuilder();
             List<FieldError> errorsList = result.getFieldErrors();
@@ -43,14 +47,22 @@ public class SensorController {
                         .append(";");
             }
         }
-        sensorService.createSensor(convertToPerson(sensorDTO));
+        sensorService.createSensor(sensor);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    private Sensor convertToPerson(SensorDTO sensorDTO) {
-        Sensor sensor = new Sensor();
-        sensor.setName(sensorDTO.getName());
-        return sensor;
+    @ExceptionHandler
+    private ResponseEntity<SensorErrorResponse> handleException(SensorNotFoundException sensorNotFoundException) {
+        SensorErrorResponse response = new SensorErrorResponse(
+                "Sensor with this ID was not found",
+                System.currentTimeMillis()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    private Sensor convertToSensor(SensorDTO sensorDTO) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(sensorDTO, Sensor.class);
     }
 
 }
