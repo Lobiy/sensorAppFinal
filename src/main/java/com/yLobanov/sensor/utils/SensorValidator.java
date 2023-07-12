@@ -23,15 +23,10 @@ public class SensorValidator implements Validator {
     }
 
     @Override
-    public void validate(Object target, Errors errors) {
-        Sensor sensor = (Sensor) target;
-
-        try {
-            sensorService.loadSensorByName(sensor.getName());
-        } catch (SensorNotFoundException ignored) {
-            return; // Ok, sensor was not created before
+    public void validate(Object object, Errors errors) {
+        Sensor sensor = (Sensor) object;
+        if (sensorService.findOneByName(sensor.getName()).isPresent()) {
+            errors.rejectValue("name", "", "Such sensor is already registered!");
         }
-
-        errors.rejectValue("sensor_name", "", "Sensor with such username already exists");
     }
 }

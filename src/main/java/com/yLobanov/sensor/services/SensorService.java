@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class SensorService {
 
     private final SensorRepository sensorRepository;
@@ -18,13 +19,13 @@ public class SensorService {
         this.sensorRepository = sensorRepository;
     }
 
+    @Transactional
     public void createSensor(Sensor sensor) {
         sensorRepository.save(sensor);
     }
 
-    public Sensor loadSensorByName(String name) throws SensorNotFoundException {
-        Optional<Sensor> sensor = sensorRepository.findByName(name);
-        if(sensor.isPresent()) return sensor.get();
-        else throw new SensorNotFoundException("Sensor was not found");
+    public Optional<Sensor> findOneByName(String name) {
+        return sensorRepository.findByName(name);
     }
+
 }

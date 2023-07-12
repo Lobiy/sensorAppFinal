@@ -46,6 +46,7 @@ public class SensorController {
                         .append(error.getDefaultMessage())
                         .append(";");
             }
+            throw new SensorNotFoundException(errors.toString());
         }
         sensorService.createSensor(sensor);
         return ResponseEntity.ok(HttpStatus.OK);
@@ -54,10 +55,10 @@ public class SensorController {
     @ExceptionHandler
     private ResponseEntity<SensorErrorResponse> handleException(SensorNotFoundException sensorNotFoundException) {
         SensorErrorResponse response = new SensorErrorResponse(
-                "Sensor with this ID was not found",
+                "Sensor with this ID was already found",
                 System.currentTimeMillis()
         );
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     private Sensor convertToSensor(SensorDTO sensorDTO) {
