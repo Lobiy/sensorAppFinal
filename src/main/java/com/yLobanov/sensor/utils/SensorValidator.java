@@ -29,4 +29,11 @@ public class SensorValidator implements Validator {
             errors.rejectValue("name", "", "Such sensor is already registered!");
         }
     }
+
+    public void validateMeasurement(Object object, Errors errors) {
+        Sensor sensor = (Sensor) object;
+        if (sensorService.findOneByName(sensor.getName()).isEmpty()) {
+            errors.rejectValue("name", "", "No such sensor exists for this measurement!");
+        }
+    }
 }

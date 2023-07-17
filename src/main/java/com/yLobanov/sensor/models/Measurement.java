@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 
 @Entity
 @Table(name = "measurement")
@@ -29,4 +31,8 @@ public class Measurement {
     @ManyToOne
     @JoinColumn(name="sensor_name", nullable=false)
     private Sensor sensor;
+
+    private Date time;
+
+    //TODO: add timestamp to DB
 }
