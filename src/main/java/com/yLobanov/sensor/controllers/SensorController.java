@@ -55,7 +55,7 @@ public class SensorController {
     @ExceptionHandler
     private ResponseEntity<SensorErrorResponse> handleException(SensorNotFoundException sensorNotFoundException) {
         SensorErrorResponse response = new SensorErrorResponse(
-                "Sensor with this ID was already found",
+                sensorNotFoundException.getMessage(),
                 System.currentTimeMillis()
         );
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

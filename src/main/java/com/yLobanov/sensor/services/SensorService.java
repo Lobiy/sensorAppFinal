@@ -2,7 +2,7 @@ package com.yLobanov.sensor.services;
 
 import com.yLobanov.sensor.models.Sensor;
 import com.yLobanov.sensor.repository.SensorRepository;
-import com.yLobanov.sensor.utils.SensorNotFoundException;
+import com.yLobanov.sensor.utils.MeasurementIncorrectException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +26,10 @@ public class SensorService {
 
     public Optional<Sensor> findOneByName(String name) {
         return sensorRepository.findByName(name);
+    }
+
+    public Sensor findOneByNameOrElseThrowException(String name) {
+        return sensorRepository.findByName(name).orElseThrow(MeasurementIncorrectException::new);
     }
 
 }

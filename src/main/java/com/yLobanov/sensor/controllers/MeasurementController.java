@@ -3,7 +3,9 @@ package com.yLobanov.sensor.controllers;
 import com.yLobanov.sensor.dto.MeasurementDTO;
 import com.yLobanov.sensor.models.Measurement;
 import com.yLobanov.sensor.services.MeasurementService;
-import com.yLobanov.sensor.utils.SensorNotFoundException;
+import com.yLobanov.sensor.services.SensorService;
+import com.yLobanov.sensor.utils.MeasurementIncorrectException;
+import com.yLobanov.sensor.utils.SensorErrorResponse;
 import com.yLobanov.sensor.utils.SensorValidator;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -23,11 +25,13 @@ public class MeasurementController {
 
     private final MeasurementService measurementService;
     private final SensorValidator sensorValidator;
+    private final SensorService sensorService;
 
     @Autowired
-    public MeasurementController(MeasurementService measurementService, SensorValidator sensorValidator) {
+    public MeasurementController(MeasurementService measurementService, SensorValidator sensorValidator, SensorService sensorService) {
         this.measurementService = measurementService;
         this.sensorValidator = sensorValidator;
+        this.sensorService = sensorService;
     }
 
     @PostMapping("/add")
@@ -43,18 +47,30 @@ public class MeasurementController {
                         .append(error.getDefaultMessage())
                         .append(";");
             }
-            throw new SensorNotFoundException(errors.toString());
+            throw new MeasurementIncorrectException(errors.toString());
         }
         measurementService.createMeasurement(measurement);
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<SensorErrorResponse> handleException(MeasurementIncorrectException exception) {
+        SensorErrorResponse response = new SensorErrorResponse(
+                exception.getMessage(),
+                System.currentTimeMillis()
+        );
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     private Measurement convertToMeasurement(MeasurementDTO measurementDTO) {
         ModelMapper modelMapper = new ModelMapper();
         Measurement measurement = modelMapper.map(measurementDTO, Measurement.class);
         measurement.setTime(new Date());
+        measurement.setSensor(sensorService.findOneByNameOrElseThrowException(measurement.getSensor().getName()));
         return measurement;
     }
+
+
 
 
 }
