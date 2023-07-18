@@ -25,7 +25,7 @@ public class MeasurementService {
         measurementRepository.save(measurement);
     }
 
-    public List<Measurement> getAllMeasurements(Sensor sensor){
-        return measurementRepository.findAllBySensorName(sensor.getName());
+    public List<Measurement> getAllMeasurements(){
+        return measurementRepository.findAll();
     }
 }

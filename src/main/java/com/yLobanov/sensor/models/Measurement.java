@@ -25,18 +25,26 @@ public class Measurement {
     @Column(name = "value")
     @Min(value = -100, message = "Measurement is incorrect, minimum temperature is -100")
     @Max(value = 100, message = "Measurement is incorrect, maximum temperature is 100")
-    private int value;
+    private Double value;
 
     @Column(name = "raining")
     @NotNull(message = "isRaining can't be empty")
     private boolean isRaining;
 
     @ManyToOne
-    @JoinColumn(name="sensor_name", nullable=false)
+    @JoinColumn(name="sensor_name", referencedColumnName = "sensor_name", nullable=false)
     @NotNull(message = "sensor can't be empty")
     private Sensor sensor;
 
     @Column(name = "measurement_time")
     @NotNull(message = "date can't be empty")
     private Date time;
+
+    @Override
+    public String toString() {
+        return "Measurement: " + "temperature is: " + this.getValue() +
+                " " + "it was raining?: " + this.isRaining() +
+                " " + "which sensor took the measurement: " + this.getSensor().getName() +
+                " " + "when: " + this.getTime();
+    }
 }

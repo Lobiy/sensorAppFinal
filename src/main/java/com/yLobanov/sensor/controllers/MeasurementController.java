@@ -2,10 +2,12 @@ package com.yLobanov.sensor.controllers;
 
 import com.yLobanov.sensor.dto.MeasurementDTO;
 import com.yLobanov.sensor.models.Measurement;
+import com.yLobanov.sensor.models.Sensor;
 import com.yLobanov.sensor.services.MeasurementService;
 import com.yLobanov.sensor.services.SensorService;
 import com.yLobanov.sensor.utils.MeasurementIncorrectException;
 import com.yLobanov.sensor.utils.SensorErrorResponse;
+import com.yLobanov.sensor.utils.SensorNotFoundException;
 import com.yLobanov.sensor.utils.SensorValidator;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -16,11 +18,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/measurement")
+@RequestMapping("/measurements")
 public class MeasurementController {
 
     private final MeasurementService measurementService;
@@ -62,15 +65,35 @@ public class MeasurementController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(SensorNotFoundException.class)
+    private ResponseEntity<SensorErrorResponse> handleException() {
+        SensorErrorResponse response = new SensorErrorResponse(
+                "Such sensor does not exist!",
+                System.currentTimeMillis()
+        );
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
     private Measurement convertToMeasurement(MeasurementDTO measurementDTO) {
-        ModelMapper modelMapper = new ModelMapper();
-        Measurement measurement = modelMapper.map(measurementDTO, Measurement.class);
+        Measurement measurement = new ModelMapper().map(measurementDTO, Measurement.class);
         measurement.setTime(new Date());
         measurement.setSensor(sensorService.findOneByNameOrElseThrowException(measurement.getSensor().getName()));
         return measurement;
     }
 
+    @GetMapping
+    public List<String> getMeasurements() {
+        List<String> stringMeasurements = new ArrayList<String>();
+        List<Measurement> measurements = measurementService.getAllMeasurements();
+        for(Measurement measurement : measurements) {
+            stringMeasurements.add(measurement.toString());
+        }
+        return stringMeasurements;
+    }
 
+    private MeasurementDTO convertToMeasurementDTO(Measurement measurement) {
+        return new ModelMapper().map(measurement, MeasurementDTO.class);
+    }
 
 
 }
